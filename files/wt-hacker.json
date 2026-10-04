@@ -1,0 +1,77 @@
+{
+    "globals":
+    {
+        "alwaysShowTabs": true,
+        "centerOnLaunch": true,
+        "copyFormatting": "none",
+        "initialCols": 130,
+        "initialRows": 34,
+        "showTabsInTitlebar": true,
+        "tabWidthMode": "equal",
+        "theme": "Hacker"
+    },
+    "defaults":
+    {
+        "backgroundImage": "%USERPROFILE%\\.config\\terminal\\anonymous-code.jpg",
+        "backgroundImageAlignment": "center",
+        "backgroundImageOpacity": 0.4,
+        "backgroundImageStretchMode": "uniform",
+        "colorScheme": "Hacker",
+        "cursorShape": "filledBox",
+        "experimental.retroTerminalEffect": true,
+        "font":
+        {
+            "face": "JetBrainsMono NF",
+            "size": 11
+        },
+        "padding": "16, 12, 16, 12"
+    },
+    "scheme":
+    {
+        "name": "Hacker",
+        "background": "#000000",
+        "black": "#0A140C",
+        "blue": "#2E8B57",
+        "brightBlack": "#2F5A38",
+        "brightBlue": "#5CDB95",
+        "brightCyan": "#9DFFB0",
+        "brightGreen": "#39FF14",
+        "brightPurple": "#B6FF9E",
+        "brightRed": "#FF5555",
+        "brightWhite": "#E6FFE9",
+        "brightYellow": "#E4FF7A",
+        "cursorColor": "#39FF14",
+        "cyan": "#00D97E",
+        "foreground": "#00FF41",
+        "green": "#00C832",
+        "purple": "#7BC96F",
+        "red": "#E0393E",
+        "selectionBackground": "#0F4D1E",
+        "white": "#A8F0B4",
+        "yellow": "#C6E000"
+    },
+    "theme":
+    {
+        "name": "Hacker",
+        "tab":
+        {
+            "background": "terminalBackground",
+            "iconStyle": "monochrome",
+            "showCloseButton": "hover",
+            "unfocusedBackground": "#00000000"
+        },
+        "tabRow":
+        {
+            "background": "#000000FF",
+            "unfocusedBackground": "#000000FF"
+        },
+        "window":
+        {
+            "applicationTheme": "dark",
+            "experimental.rainbowFrame": false,
+            "frame": "#00FF41",
+            "unfocusedFrame": "#0F4D1E",
+            "useMica": false
+        }
+    }
+}

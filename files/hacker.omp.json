@@ -1,0 +1,120 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "final_space": true,
+  "console_title_template": "root@{{ .HostName }}: {{ .Folder }}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#00C832",
+          "template": "┌──("
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#39FF14",
+          "template": "{{ .UserName }}<#00C832>㉿</>{{ .HostName }}"
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#00C832",
+          "template": ")-["
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#E6FFE9",
+          "options": {
+            "style": "full",
+            "home_icon": "~"
+          },
+          "template": "{{ .Path }}"
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#00C832",
+          "template": "]"
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#00C832",
+          "foreground_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#E4FF7A{{ end }}",
+            "{{ if or (gt .Ahead 0) (gt .Behind 0) }}#9DFFB0{{ end }}"
+          ],
+          "options": {
+            "branch_icon": " ",
+            "fetch_status": true
+          },
+          "template": "-[{{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} *{{ .Working.String }}{{ end }}{{ if .Staging.Changed }} +{{ .Staging.String }}{{ end }}]"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#2F5A38",
+          "options": {
+            "threshold": 500,
+            "style": "austin"
+          },
+          "template": "[{{ .FormattedMs }}] "
+        },
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#2F5A38",
+          "options": {
+            "time_format": "15:04:05"
+          },
+          "template": "[{{ .CurrentDate | date .Format }}]"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#00C832",
+          "template": "└─"
+        },
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "#39FF14",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#FF5555{{ end }}"
+          ],
+          "options": {
+            "always_enabled": true
+          },
+          "template": "{{ if gt .Code 0 }}[{{ .Code }}]{{ end }}{{ if .Root }}#{{ else }}${{ end }}"
+        }
+      ]
+    }
+  ],
+  "transient_prompt": {
+    "foreground": "#39FF14",
+    "template": "<#00C832>└─</>$ "
+  },
+  "secondary_prompt": {
+    "foreground": "#00C832",
+    "template": "> "
+  }
+}

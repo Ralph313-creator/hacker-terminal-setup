@@ -1,0 +1,159 @@
+{
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions": [],
+    "alwaysShowTabs": true,
+    "centerOnLaunch": true,
+    "copyFormatting": "none",
+    "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+    "initialCols": 130,
+    "initialRows": 34,
+    "keybindings": [],
+    "newTabMenu":
+    [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
+    "profiles":
+    {
+        "defaults":
+        {
+            "backgroundImage": "%USERPROFILE%\\.config\\terminal\\anonymous-code.jpg",
+            "backgroundImageAlignment": "center",
+            "backgroundImageOpacity": 0.4,
+            "backgroundImageStretchMode": "uniform",
+            "colorScheme": "Hacker",
+            "cursorShape": "filledBox",
+            "experimental.retroTerminalEffect": true,
+            "font":
+            {
+                "face": "JetBrainsMono NF",
+                "size": 11
+            },
+            "padding": "16, 12, 16, 12"
+        },
+        "list":
+        [
+            {
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoLogo",
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell"
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            },
+            {
+                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "hidden": false,
+                "name": "Azure Cloud Shell",
+                "source": "Windows.Terminal.Azure"
+            }
+        ]
+    },
+    "schemes":
+    [
+        {
+            "background": "#000000",
+            "black": "#0A140C",
+            "blue": "#2E8B57",
+            "brightBlack": "#2F5A38",
+            "brightBlue": "#5CDB95",
+            "brightCyan": "#9DFFB0",
+            "brightGreen": "#39FF14",
+            "brightPurple": "#B6FF9E",
+            "brightRed": "#FF5555",
+            "brightWhite": "#E6FFE9",
+            "brightYellow": "#E4FF7A",
+            "cursorColor": "#39FF14",
+            "cyan": "#00D97E",
+            "foreground": "#00FF41",
+            "green": "#00C832",
+            "name": "Hacker",
+            "purple": "#7BC96F",
+            "red": "#E0393E",
+            "selectionBackground": "#0F4D1E",
+            "white": "#A8F0B4",
+            "yellow": "#C6E000"
+        },
+        {
+            "background": "#0A0E1A",
+            "black": "#151B2E",
+            "blue": "#3D7BFF",
+            "brightBlack": "#4F5B82",
+            "brightBlue": "#78A2FF",
+            "brightCyan": "#7DF3FF",
+            "brightGreen": "#66FFC7",
+            "brightPurple": "#D3A6FF",
+            "brightRed": "#FF6E91",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FFE29A",
+            "cursorColor": "#00F0FF",
+            "cyan": "#00E5FF",
+            "foreground": "#D6E2FF",
+            "green": "#00FFA3",
+            "name": "Neon Grid",
+            "purple": "#B26BFF",
+            "red": "#FF3B6B",
+            "selectionBackground": "#2B3A67",
+            "white": "#C3CDE8",
+            "yellow": "#FFD166"
+        }
+    ],
+    "showTabsInTitlebar": true,
+    "tabWidthMode": "equal",
+    "theme": "Hacker",
+    "themes":
+    [
+        {
+            "name": "Hacker",
+            "tab":
+            {
+                "background": "terminalBackground",
+                "iconStyle": "monochrome",
+                "showCloseButton": "hover",
+                "unfocusedBackground": "#00000000"
+            },
+            "tabRow":
+            {
+                "background": "#000000FF",
+                "unfocusedBackground": "#000000FF"
+            },
+            "window":
+            {
+                "applicationTheme": "dark",
+                "experimental.rainbowFrame": false,
+                "frame": "#00FF41",
+                "unfocusedFrame": "#0F4D1E",
+                "useMica": false
+            }
+        },
+        {
+            "name": "Neon",
+            "tab":
+            {
+                "background": "terminalBackground",
+                "iconStyle": "default",
+                "showCloseButton": "hover",
+                "unfocusedBackground": "#00000000"
+            },
+            "tabRow":
+            {
+                "background": "#060912FF",
+                "unfocusedBackground": "#060912FF"
+            },
+            "window":
+            {
+                "applicationTheme": "dark",
+                "experimental.rainbowFrame": false,
+                "frame": null,
+                "unfocusedFrame": null,
+                "useMica": false
+            }
+        }
+    ]
+}
