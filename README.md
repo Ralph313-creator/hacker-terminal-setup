@@ -1,65 +1,146 @@
 # Hacker Terminal Setup
 
-Green-on-black Windows Terminal theme with a Kali-style prompt, an Anonymous mask wallpaper, and a Claude Code status line that always shows your usage.
+A green-on-black hacker theme for **Windows Terminal + PowerShell**, with a Kali Linux–style prompt, an Anonymous mask wallpaper, and **AI usage always on screen**: your Claude Code and Codex (ChatGPT) plan limits right in the prompt.
 
-```
-┌──(Administrator㉿Server)-[~\Desktop]
-└─#
-```
+![Hacker terminal theme](screenshots/terminal.png)
 
-Claude Code status line:
+*Example with sample data: Claude Code status line on top, prompt with the AI usage segment on the right.*
 
-```
-Super intelligent │ ctx █░░░░░░░░░ 12% │ 5h ███░░░░░ 43% ↻2h09m │ 7d █████░░░ 64% ↻3d │ $2.72
-```
+## What you get
 
-`ctx` = conversation context used · `5h` / `7d` = plan usage limits and time until reset · `$` = session cost at API prices. Turns yellow at 70%, red at 90%.
+| Part | What it does |
+|---|---|
+| **Hacker color scheme** | Matrix green on pure black, block cursor, green window border, CRT scanline effect |
+| **Anonymous wallpaper** | Mask made of code, dimmed behind your text |
+| **Kali-style prompt** | `┌──(user㉿host)-[path]-[git branch]` with `$` (or `#` when running as admin), red exit code when a command fails |
+| **AI usage in the prompt** | `[Claude 5h 58% 7d 74% │ GPT 5h 12% 7d 31%]`: last known plan usage of each AI agent you use, shown in every terminal. Green normally, **yellow** at 70%, **red** at 90% |
+| **Claude Code status line** | Bar at the bottom of Claude Code: context used, 5-hour and weekly limits with reset times, session cost |
+| **Green syntax colors** | Commands, parameters, strings etc. colored as you type |
 
-## Install on a new PC
+## Requirements
 
-Open **PowerShell** and run:
+- Windows 10 or 11
+- `winget` (built in on Windows 11; on Windows 10 install **App Installer** from the Microsoft Store)
+
+The installer adds everything else: Windows Terminal, oh-my-posh, Node.js and the JetBrainsMono Nerd Font.
+
+## Install
+
+Open **PowerShell** and paste:
 
 ```powershell
-winget install GitHub.cli
+irm https://raw.githubusercontent.com/Ralph313-creator/hacker-terminal-setup/main/bootstrap.ps1 | iex
 ```
 
-Close PowerShell, open a new window, then:
+When it says **Done**, close PowerShell and open **Windows Terminal**.
 
+<details>
+<summary>Other ways to install</summary>
+
+**With git:**
 ```powershell
-gh auth login
-gh repo clone Ralph313-creator/hacker-terminal-setup $HOME\hacker-terminal-setup
+git clone https://github.com/Ralph313-creator/hacker-terminal-setup $HOME\hacker-terminal-setup
 & $HOME\hacker-terminal-setup\install.cmd
 ```
 
-Open a new Windows Terminal window when it finishes.
+**Without git:** click **Code → Download ZIP** on this page, extract it, and double-click `install.cmd`.
+</details>
 
-The installer:
-- installs Windows Terminal, oh-my-posh, Node.js and the JetBrainsMono Nerd Font (skips anything already installed)
-- copies the prompt to `~\.config\oh-my-posh\hacker.omp.json` and the wallpaper to `~\.config\terminal\anonymous-code.jpg`
-- installs the PowerShell profile (prompt + green syntax colors)
-- merges the Hacker scheme/theme into Windows Terminal's settings, keeping your existing profiles
-- copies the status line to `~\.claude\statusline.js` and turns it on in `~\.claude\settings.json`, keeping your other Claude Code settings
+### What the installer changes
 
-Anything it overwrites is backed up next to the original as `*.bak-<timestamp>`. Safe to re-run.
+- Installs Windows Terminal, oh-my-posh, Node.js and the JetBrainsMono Nerd Font (skips what's already installed)
+- Copies the prompt to `~\.config\oh-my-posh\`, the usage reader to `~\.config\ai-usage\`, the wallpaper to `~\.config\terminal\`
+- Replaces your PowerShell profile (Windows PowerShell, and PowerShell 7 if installed)
+- **Adds** the Hacker scheme to Windows Terminal and makes it the default; your existing profiles and schemes stay
+- Turns on the Claude Code status line in `~\.claude\settings.json`; your other Claude Code settings stay
 
-## Tweaks
+Everything it overwrites is backed up next to the original as `*.bak-<timestamp>`. Safe to run again (for example, to update).
 
-All in Windows Terminal's `settings.json` (Settings → Open JSON file), under `profiles.defaults`:
+## Using it
+
+**Nothing to do: it's on in every new Windows Terminal tab.**
+
+### AI usage in the prompt
+
+The segment on the right of the prompt shows the **last known** usage of each agent:
+
+| Agent | Where the numbers come from | When they update |
+|---|---|---|
+| **Claude Code** | Claude Code's status line saves them | Whenever Claude Code is open |
+| **Codex CLI** (ChatGPT) | Codex's own session logs in `~\.codex\sessions` | After each Codex reply |
+
+- An agent only appears after you've used it at least once.
+- A limit disappears once its reset time has passed, since that usage no longer counts.
+- Claude limits are shared with claude.ai, so usage on the website is included the next time Claude Code refreshes.
+- **Gemini CLI** isn't shown: it doesn't save plan-limit percentages anywhere this theme can read. Its own footer shows context usage.
+
+### Inside the agents
+
+- **Claude Code:** the status line at the bottom is set up automatically.
+- **Codex CLI:** Codex has a built-in status line that can show limits. Add this to `~\.codex\config.toml` (merge into an existing `[tui]` section if you have one):
+  ```toml
+  [tui]
+  status_line = ["model-with-reasoning", "current-dir", "context-usage", "used-tokens", "five-hour-limit", "weekly-limit"]
+  ```
+
+## Customize
+
+### Windows Terminal (colors, wallpaper, font, cursor)
+
+Press **Ctrl + ,** in Windows Terminal → **Profiles → Defaults → Appearance**, or click **Open JSON file** and edit `profiles.defaults`:
 
 | Want | Change |
 |---|---|
 | Darker / brighter wallpaper | `"backgroundImageOpacity": 0.4` (lower = darker, `1` = full) |
+| Your own wallpaper | put an image in `~\.config\terminal\` and point `"backgroundImage"` at it |
 | Plain black, no wallpaper | delete the four `backgroundImage...` lines |
 | No CRT scanlines | `"experimental.retroTerminalEffect": false` |
+| Different cursor | `"cursorShape"`: `bar`, `underscore`, `vintage`, `filledBox` |
+| Font size | `"font": { "size": 11 }` |
+| Colors | **Settings → Color schemes → Hacker**, or the `"Hacker"` entry under `"schemes"` |
+
+### Prompt
+
+Edit `~\.config\oh-my-posh\hacker.omp.json`: change any `"foreground"` color, or the `"template"` text of a part. Open a new tab to see changes.
+
+### Typing colors
+
+Run `notepad $PROFILE` and edit the `Set-PSReadLineOption -Colors` block (values are `R;G;B`).
+
+### Claude Code status line
+
+Edit `~\.claude\statusline.js`:
+- **Label:** the text in `parts.push(bright('Super intelligent'))`
+- **Warning levels:** `70` and `90` in `function level(pct)`
+
+## Uninstall
+
+1. **Windows Terminal:** Settings → Profiles → Defaults → Appearance → pick another color scheme and remove the background image. Or restore the newest `settings.json.bak-*` in `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\`.
+2. **PowerShell profile:** restore the newest `Microsoft.PowerShell_profile.ps1.bak-*` in `Documents\WindowsPowerShell\`, or delete the profile.
+3. **Claude Code status line:** remove the `"statusLine"` block from `~\.claude\settings.json`.
+4. Optionally delete `~\.config\oh-my-posh\hacker.omp.json`, `~\.config\ai-usage\` and `~\.config\terminal\anonymous-code.jpg`.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| Boxes or `?` instead of icons | The font didn't install. Run `oh-my-posh font install JetBrainsMono`, then restart Windows Terminal |
+| `irm ... \| iex` is blocked | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, then try again |
+| No AI usage in the prompt | Use Claude Code or Codex once; also check `node --version` works |
+| Usage numbers look old | They're the last known values; open the agent to refresh them |
+| Theme only in some tabs | The theme is applied to **Defaults**; a profile with its own color scheme overrides it |
 
 ## Files
 
 | File | What it is |
 |---|---|
+| `bootstrap.ps1` | One-line installer: downloads this repo and runs `install.ps1` |
 | `install.ps1` / `install.cmd` | Installer (double-click `install.cmd`) |
-| `files/wt-hacker.json` | Color scheme, window theme and profile defaults that get merged into Windows Terminal |
+| `files/wt-hacker.json` | Color scheme, window theme and defaults merged into Windows Terminal |
 | `files/hacker.omp.json` | oh-my-posh prompt |
-| `files/Microsoft.PowerShell_profile.ps1` | PowerShell profile |
-| `files/statusline.js` | Claude Code status line (usage limits, context, cost) |
-| `files/anonymous-code.jpg` | Wallpaper ([source](https://pixelz.cc/images/anonymous-mask-code-uhd-4k-wallpaper/)) |
+| `files/Microsoft.PowerShell_profile.ps1` | PowerShell profile (prompt, AI usage refresh, typing colors) |
+| `files/ai-usage.js` | Reads Claude Code and Codex usage for the prompt |
+| `files/statusline.js` | Claude Code status line |
 | `files/settings.reference.json` | Full Windows Terminal settings from the original PC, for reference |
+
+The wallpaper isn't stored here. The installer downloads it from [pixelz.cc](https://pixelz.cc/images/anonymous-mask-code-uhd-4k-wallpaper/).

@@ -63,6 +63,16 @@
       "alignment": "right",
       "segments": [
         {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#00C832",
+          "foreground_templates": [
+            "{{ if eq .Env.AI_USAGE_LEVEL \"hot\" }}#FF5555{{ end }}",
+            "{{ if eq .Env.AI_USAGE_LEVEL \"warn\" }}#E4FF7A{{ end }}"
+          ],
+          "template": "{{ if .Env.AI_USAGE }}<#2F5A38>[</>{{ .Env.AI_USAGE }}<#2F5A38>]</> {{ end }}"
+        },
+        {
           "type": "executiontime",
           "style": "plain",
           "foreground": "#2F5A38",

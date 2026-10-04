@@ -1,12 +1,27 @@
 // Claude Code status line: context window, plan usage limits, session cost.
 // Claude Code pipes session JSON on stdin and shows whatever this prints.
+// Also saves the plan limits to ~/.cache/ai-usage/claude.json for the shell prompt's usage segment.
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
 let raw = '';
 process.stdin.on('data', (c) => (raw += c));
 process.stdin.on('end', () => {
   let d = {};
   try { d = JSON.parse(raw); } catch {}
+  saveLimits(d.rate_limits);
   process.stdout.write(render(d));
 });
+
+function saveLimits(rl) {
+  if (!rl || (!rl.five_hour && !rl.seven_day)) return;
+  try {
+    const dir = path.join(os.homedir(), '.cache', 'ai-usage');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'claude.json'), JSON.stringify({ updated: Date.now(), rate_limits: rl }));
+  } catch {}
+}
 
 const rgb = (r, g, b) => (s) => `\x1b[38;2;${r};${g};${b}m${s}\x1b[0m`;
 const bright = rgb(57, 255, 20);

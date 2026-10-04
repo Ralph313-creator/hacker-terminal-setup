@@ -1,5 +1,5 @@
 # Hacker terminal setup: Windows Terminal theme + Kali-style oh-my-posh prompt + Anonymous wallpaper
-# + Claude Code usage status line.
+# + Claude Code usage status line + AI usage segment in the prompt (Claude Code, Codex).
 # Safe to re-run. Backs up anything it overwrites (*.bak-<timestamp>).
 param(
     [string]$SettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
@@ -58,6 +58,12 @@ $wallDir = Join-Path $HOME '.config\terminal'
 New-Item -ItemType Directory -Force $ompDir, $wallDir | Out-Null
 Copy-Item (Join-Path $files 'hacker.omp.json') $ompDir -Force
 Step "Prompt config -> $ompDir\hacker.omp.json"
+
+# AI usage segment for the prompt (reads Claude Code + Codex usage)
+$usageDir = Join-Path $HOME '.config\ai-usage'
+New-Item -ItemType Directory -Force $usageDir | Out-Null
+Copy-Item (Join-Path $files 'ai-usage.js') $usageDir -Force
+Step "AI usage reader -> $usageDir\ai-usage.js"
 
 $wall = Join-Path $wallDir 'anonymous-code.jpg'
 $localWall = Join-Path $files 'anonymous-code.jpg'
