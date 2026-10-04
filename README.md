@@ -10,7 +10,7 @@ Green-on-black Windows Terminal theme with a Kali-style prompt, an Anonymous mas
 Claude Code status line:
 
 ```
-Rap Super intelligent │ ctx █░░░░░░░░░ 12% │ 5h ███░░░░░ 43% ↻2h09m │ 7d █████░░░ 64% ↻3d │ $2.72
+Super intelligent │ ctx █░░░░░░░░░ 12% │ 5h ███░░░░░ 43% ↻2h09m │ 7d █████░░░ 64% ↻3d │ $2.72
 ```
 
 `ctx` = conversation context used · `5h` / `7d` = plan usage limits and time until reset · `$` = session cost at API prices. Turns yellow at 70%, red at 90%.
