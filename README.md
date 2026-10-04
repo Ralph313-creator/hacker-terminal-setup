@@ -6,6 +6,22 @@ A green-on-black hacker theme for **Windows Terminal + PowerShell**, with a Kali
 
 *Example with sample data: Claude Code status line on top, prompt with the AI usage segment on the right.*
 
+## Screenshots
+
+**A normal session:** colored output, the full wallpaper, a red `[1]` after a failed command, and syntax colors while typing:
+
+![Terminal session](screenshots/session.png)
+
+**AI usage in the prompt** changes color with your highest limit:
+
+![AI usage levels](screenshots/usage-levels.png)
+
+**Claude Code status line** at different usage levels:
+
+![Claude Code status line levels](screenshots/statusline-levels.png)
+
+*Usage numbers in all screenshots are sample data.*
+
 ## What you get
 
 | Part | What it does |
