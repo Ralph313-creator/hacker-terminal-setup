@@ -1,7 +1,9 @@
-# Hacker terminal setup: Windows Terminal theme + Kali-style oh-my-posh prompt + Anonymous wallpaper.
+# Hacker terminal setup: Windows Terminal theme + Kali-style oh-my-posh prompt + Anonymous wallpaper
+# + Claude Code usage status line.
 # Safe to re-run. Backs up anything it overwrites (*.bak-<timestamp>).
 param(
     [string]$SettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
+    [string]$ClaudeDir = (Join-Path $HOME '.claude'),
     [switch]$SkipApps,
     [switch]$SkipProfile
 )
@@ -30,6 +32,12 @@ if (-not $SkipApps) {
             Step "Installing $id"
             winget install --id $id -e --silent --accept-package-agreements --accept-source-agreements
         }
+    }
+    # Node.js runs the Claude Code status line
+    if (Get-Command node -ErrorAction SilentlyContinue) { Step 'Node.js already installed' }
+    else {
+        Step 'Installing Node.js LTS'
+        winget install --id OpenJS.NodeJS.LTS -e --silent --accept-package-agreements --accept-source-agreements
     }
     # Pick up PATH changes from the installs above
     $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
@@ -98,6 +106,27 @@ foreach ($p in $frag.defaults.PSObject.Properties) { SetProp $s.profiles.default
 
 [IO.File]::WriteAllText($SettingsPath, ($s | ConvertTo-Json -Depth 32), $utf8NoBom)
 Step "Windows Terminal settings -> $SettingsPath"
+
+# --- 5. Claude Code status line (usage limits, context, cost) ---
+New-Item -ItemType Directory -Force $ClaudeDir | Out-Null
+$statusScript = Join-Path $ClaudeDir 'statusline.js'
+Copy-Item (Join-Path $files 'statusline.js') $statusScript -Force
+Step "Status line script -> $statusScript"
+
+$claudeSettings = Join-Path $ClaudeDir 'settings.json'
+if (Test-Path $claudeSettings) {
+    Backup $claudeSettings
+    $c = Get-Content $claudeSettings -Raw | ConvertFrom-Json
+} else {
+    $c = [pscustomobject]@{}
+}
+SetProp $c 'statusLine' ([pscustomobject]@{
+    type    = 'command'
+    command = 'node ' + ($statusScript -replace '\\', '/')
+    padding = 0
+})
+[IO.File]::WriteAllText($claudeSettings, ($c | ConvertTo-Json -Depth 32), $utf8NoBom)
+Step "Claude Code status line enabled in $claudeSettings"
 
 Write-Host ''
 Write-Host 'Done. Open a new Windows Terminal window to see the hacker theme.' -ForegroundColor Green
