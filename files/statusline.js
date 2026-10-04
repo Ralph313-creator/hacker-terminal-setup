@@ -46,7 +46,7 @@ function pctOf(x) {
 function render(d) {
   const parts = [];
 
-  parts.push(bright('Status'));
+  parts.push(bright('Rap Super intelligent'));
 
   const cw = d.context_window || {};
   let ctx = cw.used_percentage;
