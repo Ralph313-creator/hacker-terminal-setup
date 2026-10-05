@@ -118,8 +118,7 @@ Step "Windows Terminal settings -> $SettingsPath"
 
 # --- 4b. "Open in Terminal" in the Explorer right-click menu, if Windows doesn't show one ---
 if (-not $SkipContextMenu) {
-    # Terminal's own entry is missing for the built-in Administrator account, with zip/portable
-    # installs, or when the shell extension is blocked
+    # Terminal's own entry is missing with zip/portable installs, or when its shell extension is blocked
     $menuKey = 'HKCU:\Software\Classes\{0}\shell\OpenHackerTerminal'
     $ours = Test-Path ($menuKey -f 'Directory\Background')
     # A plain folder: the profile folder ($HOME) is a special shell folder with its own, shorter menu
