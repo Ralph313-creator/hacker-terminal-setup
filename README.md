@@ -70,7 +70,7 @@ git clone https://github.com/Ralph313-creator/hacker-terminal-setup $HOME\hacker
 - Replaces your PowerShell profile (Windows PowerShell, and PowerShell 7 if installed)
 - **Adds** the Hacker scheme to Windows Terminal and makes it the default; your existing profiles and schemes stay
 - Turns on the Claude Code status line in `~\.claude\settings.json`; your other Claude Code settings stay
-- **Adds** a **Hacker Terminal** profile (PowerShell) plus the Hacker colors and font to VS Code, VS Code Insiders and Cursor (whichever you have), and makes it the default terminal; your other editor settings stay. If you picked another shell there (Git Bash, Command Prompt), that stays the default. A Windows Terminal (`wt.exe`) profile is removed, since it opens in a separate window instead of inside the editor. Skip this step with `install.ps1 -SkipVSCode`
+- **Adds** a **Hacker Terminal** profile (PowerShell) plus the Hacker colors and font to VS Code, VS Code Insiders and Cursor (whichever you have), and makes it the default terminal; your other editor settings stay. This works even if the editor has never been opened, and also applies to editor profiles that have their own settings. If you picked another shell there (Git Bash, Command Prompt), that stays the default. A Windows Terminal (`wt.exe`) profile is removed, since it opens in a separate window instead of inside the editor. Skip this step with `install.ps1 -SkipVSCode`
 
 Everything it overwrites is backed up next to the original as `*.bak-<timestamp>`. Safe to run again (for example, to update).
 
@@ -161,6 +161,7 @@ Edit `~\.claude\statusline.js`:
 | No AI usage in the prompt | Use Claude Code or Codex once; also check `node --version` works |
 | Usage numbers look old | They're the last known values; open the agent to refresh them |
 | VS Code opens the terminal in a separate window | Its default terminal is Windows Terminal (`wt.exe`). Re-run the installer, or set `"terminal.integrated.defaultProfile.windows": "Hacker Terminal"` |
+| Installer says `VS Code / Cursor not found` | Install the editor, then run the installer again |
 | Installer says VS Code settings were skipped | The settings file has `/* */` comments or trailing commas the installer can't read safely. Copy the values from `files/vscode-hacker.json` in by hand |
 | Theme only in some tabs | The theme is applied to **Defaults**; a profile with its own color scheme overrides it |
 

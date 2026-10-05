@@ -139,23 +139,17 @@ Step "Claude Code status line enabled in $claudeSettings"
 # --- 6. VS Code / Cursor integrated terminal (merged, not replaced) ---
 if (-not $SkipVSCode) {
     $vs = Get-Content (Join-Path $files 'vscode-hacker.json') -Raw | ConvertFrom-Json
-    $editors = [ordered]@{
-        'VS Code'          = "$env:APPDATA\Code\User"
-        'VS Code Insiders' = "$env:APPDATA\Code - Insiders\User"
-        'Cursor'           = "$env:APPDATA\Cursor\User"
-    }
-    foreach ($name in $editors.Keys) {
-        $dir = $editors[$name]
-        if (-not (Test-Path $dir)) { continue }
-        $vsSettings = Join-Path $dir 'settings.json'
+
+    function Merge-EditorSettings($name, $vsSettings) {
         $raw = if (Test-Path $vsSettings) { (Get-Content $vsSettings) | Where-Object { $_ -notmatch '^\s*//' } } else { $null }
         try {
             $v = if ("$raw".Trim()) { ($raw -join "`n") | ConvertFrom-Json } else { [pscustomobject]@{} }
         } catch {
             # VS Code allows comments and trailing commas that Windows PowerShell can't parse; don't risk breaking the file
             Warn "$name settings could not be read (comments or trailing commas?). Skipped; copy files\vscode-hacker.json in by hand."
-            continue
+            return
         }
+        New-Item -ItemType Directory -Force (Split-Path $vsSettings) | Out-Null
         Backup $vsSettings
 
         foreach ($p in $vs.settings.PSObject.Properties) { SetProp $v $p.Name $p.Value }
@@ -184,6 +178,45 @@ if (-not $SkipVSCode) {
         [IO.File]::WriteAllText($vsSettings, ($v | ConvertTo-Json -Depth 32), $utf8NoBom)
         Step "$name terminal theme -> $vsSettings"
     }
+
+    $editors = @(
+        @{ Name = 'VS Code'; Data = "$env:APPDATA\Code"; Cmd = 'code'
+           Exe = "$env:LOCALAPPDATA\Programs\Microsoft VS Code\Code.exe", "$env:ProgramFiles\Microsoft VS Code\Code.exe" }
+        @{ Name = 'VS Code Insiders'; Data = "$env:APPDATA\Code - Insiders"; Cmd = 'code-insiders'
+           Exe = "$env:LOCALAPPDATA\Programs\Microsoft VS Code Insiders\Code - Insiders.exe", "$env:ProgramFiles\Microsoft VS Code Insiders\Code - Insiders.exe" }
+        @{ Name = 'Cursor'; Data = "$env:APPDATA\Cursor"; Cmd = 'cursor'
+           Exe = @("$env:LOCALAPPDATA\Programs\cursor\Cursor.exe") }
+    )
+    $found = $false
+    foreach ($e in $editors) {
+        $user = Join-Path $e.Data 'User'
+        $installed = (Test-Path $user) -or @($e.Exe | Where-Object { Test-Path $_ }).Count -gt 0 -or
+            [bool](Get-Command $e.Cmd -ErrorAction SilentlyContinue)
+        if (-not $installed) { continue }
+        $found = $true
+
+        # Default profile. Created if the editor was installed but never opened; it reads the file on first launch
+        Merge-EditorSettings $e.Name (Join-Path $user 'settings.json')
+
+        # Other editor profiles that keep their own settings instead of sharing the Default profile's
+        $targets = [ordered]@{}
+        $storage = Join-Path $user 'globalStorage\storage.json'
+        if (Test-Path $storage) {
+            try { $profiles = @((Get-Content $storage -Raw | ConvertFrom-Json).userDataProfiles) } catch { $profiles = @() }
+            foreach ($p in $profiles) {
+                if (-not $p -or ($p.useDefaultFlags -and $p.useDefaultFlags.settings)) { continue }
+                $pdir = Join-Path $user "profiles\$($p.location)"
+                # Full path, so the folder scan below recognizes it (APPDATA can be an 8.3 short path)
+                if (Test-Path $pdir) { $targets[(Join-Path (Get-Item $pdir).FullName 'settings.json')] = "$($e.Name) ($($p.name) profile)" }
+            }
+        }
+        Get-ChildItem (Join-Path $user 'profiles') -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+            $f = Join-Path $_.FullName 'settings.json'
+            if ((Test-Path $f) -and -not $targets.Contains($f)) { $targets[$f] = "$($e.Name) ($($_.Name) profile)" }
+        }
+        foreach ($t in @($targets.Keys)) { Merge-EditorSettings $targets[$t] $t }
+    }
+    if (-not $found) { Step 'VS Code / Cursor not found; skipped. Re-run the installer after installing one.' }
 }
 
 Write-Host ''
