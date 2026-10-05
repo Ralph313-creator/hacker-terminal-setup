@@ -66,7 +66,7 @@ git clone https://github.com/Ralph313-creator/hacker-terminal-setup $HOME\hacker
 
 ### What the installer changes
 
-- Installs Windows Terminal if it isn't there (`winget install --id Microsoft.WindowsTerminal -e`), plus oh-my-posh, Node.js and the JetBrainsMono Nerd Font (skips what's already installed)
+- Installs Windows Terminal from the Microsoft Store if it isn't there (`winget install --id 9N0DX20HK701 -s msstore`) and replaces a non-Store copy with the Store one, plus oh-my-posh, Node.js and the JetBrainsMono Nerd Font (skips what's already installed)
 - Copies the prompt to `~\.config\oh-my-posh\`, the usage reader to `~\.config\ai-usage\`, the wallpaper to `~\.config\terminal\`
 - Replaces your PowerShell profile (Windows PowerShell, and PowerShell 7 if installed)
 - **Adds** the Hacker scheme to Windows Terminal and makes it the default; your existing profiles and schemes stay
@@ -167,7 +167,7 @@ Edit `~\.claude\statusline.js`:
 | Installer says `VS Code / Cursor not found` | Install the editor, then run the installer again |
 | Installer says VS Code settings were skipped | The settings file has `/* */` comments or trailing commas the installer can't read safely. Copy the values from `files/vscode-hacker.json` in by hand |
 | **Open in Terminal** shows twice | Windows Terminal's own entry started showing after the installer added one. Remove the extra one (Uninstall, step 5) |
-| **Open in Terminal** says *No applicable app licenses found* | Windows Terminal isn't installed. Run `winget install --id Microsoft.WindowsTerminal -e`, or run the installer again |
+| **Open in Terminal** says *No applicable app licenses found* | Windows Terminal is missing, or it's the copy from winget's own source. Install it from the [Microsoft Store](https://apps.microsoft.com/detail/9n0dx20hk701), or run the installer again |
 | Theme only in some tabs | The theme is applied to **Defaults**; a profile with its own color scheme overrides it |
 
 ## Files

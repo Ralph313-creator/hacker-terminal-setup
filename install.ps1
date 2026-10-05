@@ -28,20 +28,54 @@ if (-not $SkipApps) {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
         throw "winget not found. Install 'App Installer' from the Microsoft Store, then re-run."
     }
-    # Windows Terminal: check for the app itself; winget's list can report it installed when it isn't
-    function Test-WindowsTerminal {
-        try { if (Get-AppxPackage Microsoft.WindowsTerminal -ErrorAction Stop) { return $true } } catch {}
-        [bool](Get-Command wt.exe -ErrorAction SilentlyContinue)
+    # Windows Terminal: check for the app itself; winget's list can report it installed when it isn't.
+    # Install it from the Microsoft Store (9N0DX20HK701): a copy from winget's own source can fail to
+    # open with "No applicable app licenses found".
+    $wtStoreId = '9N0DX20HK701'
+    function Get-WindowsTerminal {
+        try { Get-AppxPackage Microsoft.WindowsTerminal -ErrorAction Stop | Select-Object -First 1 } catch {}
     }
-    if (Test-WindowsTerminal) { Step 'Microsoft.WindowsTerminal already installed' }
+    function Test-WindowsTerminal { [bool](Get-WindowsTerminal) -or [bool](Get-Command wt.exe -ErrorAction SilentlyContinue) }
+    function Test-StoreTerminal { $p = Get-WindowsTerminal; $p -and "$($p.SignatureKind)" -eq 'Store' }
+    function Install-StoreTerminal([switch]$Force) {
+        $a = @('install', '--id', $wtStoreId, '-s', 'msstore', '--silent', '--accept-package-agreements', '--accept-source-agreements')
+        if ($Force) { $a += '--force' }
+        winget @a
+    }
+    if (Test-StoreTerminal) { Step 'Windows Terminal (Microsoft Store) already installed' }
+    elseif (Get-WindowsTerminal) {
+        Step 'Windows Terminal is a non-Store copy; replacing it with the Microsoft Store version'
+        Install-StoreTerminal -Force
+        if (-not (Test-StoreTerminal)) {
+            # Windows won't swap in the Store copy over this one; remove it first, keeping its settings
+            $keep = $null
+            if (Test-Path $SettingsPath) { $keep = Join-Path $env:TEMP "wt-settings-$stamp.json"; Copy-Item $SettingsPath $keep }
+            Get-WindowsTerminal | Remove-AppxPackage -ErrorAction SilentlyContinue
+            Install-StoreTerminal
+            if (-not (Test-WindowsTerminal)) {
+                Warn 'Microsoft Store install failed; putting the winget copy back'
+                winget install --id Microsoft.WindowsTerminal -e --silent --accept-package-agreements --accept-source-agreements
+            }
+            if ($keep) {
+                New-Item -ItemType Directory -Force (Split-Path $SettingsPath) | Out-Null
+                Copy-Item $keep $SettingsPath -Force
+            }
+        }
+        if (-not (Test-StoreTerminal)) { Warn "Couldn't switch to the Store copy. Install it from https://apps.microsoft.com/detail/$wtStoreId" }
+    }
+    elseif (Test-WindowsTerminal) { Step 'Windows Terminal already installed' }
     else {
-        Step 'Windows Terminal not found; installing Microsoft.WindowsTerminal'
-        winget install --id Microsoft.WindowsTerminal -e --silent --accept-package-agreements --accept-source-agreements
+        Step 'Windows Terminal not found; installing it from the Microsoft Store'
+        Install-StoreTerminal
         if (-not (Test-WindowsTerminal)) {
             # winget skips it when it thinks Terminal is already there
-            winget install --id Microsoft.WindowsTerminal -e --force --silent --accept-package-agreements --accept-source-agreements
+            Install-StoreTerminal -Force
         }
-        if (-not (Test-WindowsTerminal)) { Warn "Windows Terminal didn't install. Run: winget install --id Microsoft.WindowsTerminal -e" }
+        if (-not (Test-WindowsTerminal)) {
+            Warn 'Microsoft Store install failed; trying winget instead'
+            winget install --id Microsoft.WindowsTerminal -e --silent --accept-package-agreements --accept-source-agreements
+        }
+        if (-not (Test-WindowsTerminal)) { Warn "Windows Terminal didn't install. Get it from https://apps.microsoft.com/detail/$wtStoreId" }
     }
     foreach ($id in 'JanDeDobbeleer.OhMyPosh') {
         winget list --id $id -e --accept-source-agreements *> $null
