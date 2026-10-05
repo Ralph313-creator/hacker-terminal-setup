@@ -7,7 +7,8 @@ param(
     [string]$ClaudeDir = (Join-Path $HOME '.claude'),
     [switch]$SkipApps,
     [switch]$SkipProfile,
-    [switch]$SkipVSCode
+    [switch]$SkipVSCode,
+    [switch]$SkipContextMenu
 )
 $ErrorActionPreference = 'Stop'
 $files = Join-Path $PSScriptRoot 'files'
@@ -114,6 +115,36 @@ foreach ($p in $frag.defaults.PSObject.Properties) { SetProp $s.profiles.default
 
 [IO.File]::WriteAllText($SettingsPath, ($s | ConvertTo-Json -Depth 32), $utf8NoBom)
 Step "Windows Terminal settings -> $SettingsPath"
+
+# --- 4b. "Open in Terminal" in the Explorer right-click menu, if Windows doesn't show one ---
+if (-not $SkipContextMenu) {
+    # Terminal's own entry is missing for the built-in Administrator account, with zip/portable
+    # installs, or when the shell extension is blocked
+    $menuKey = 'HKCU:\Software\Classes\{0}\shell\OpenHackerTerminal'
+    $ours = Test-Path ($menuKey -f 'Directory\Background')
+    # A plain folder: the profile folder ($HOME) is a special shell folder with its own, shorter menu
+    $verbs = @((New-Object -ComObject Shell.Application).Namespace([IO.Path]::GetTempPath()).Self.Verbs() | ForEach-Object Name)
+    if (-not $ours -and ($verbs -match 'Terminal')) { Step '"Open in Terminal" already in the right-click menu' }
+    else {
+        $wt = (Get-Command wt.exe -ErrorAction SilentlyContinue).Source
+        if (-not $wt) { $wt = "$env:LOCALAPPDATA\Microsoft\WindowsApps\wt.exe" }
+        if (-not (Test-Path $wt)) { Warn 'wt.exe not found; right-click "Open in Terminal" not added' }
+        else {
+            # wt.exe is usually an app alias with no icon of its own; use the real exe for the icon
+            $pkg = Get-AppxPackage Microsoft.WindowsTerminal -ErrorAction SilentlyContinue | Select-Object -First 1
+            $icon = if ($pkg -and (Test-Path "$($pkg.InstallLocation)\WindowsTerminal.exe")) { "$($pkg.InstallLocation)\WindowsTerminal.exe" } else { $wt }
+            foreach ($type in 'Directory', 'Directory\Background', 'Drive') {
+                $k = $menuKey -f $type
+                New-Item -Path "$k\command" -Force | Out-Null
+                Set-ItemProperty $k '(default)' 'Open in Terminal'
+                Set-ItemProperty $k 'Icon' "`"$icon`",0"
+                # "\." keeps a drive root like C:\ from escaping the closing quote
+                Set-ItemProperty "$k\command" '(default)' "`"$wt`" -d `"%V\.`""
+            }
+            Step '"Open in Terminal" added to the right-click menu (folders, folder background, drives)'
+        }
+    }
+}
 
 # --- 5. Claude Code status line (usage limits, context, cost) ---
 New-Item -ItemType Directory -Force $ClaudeDir | Out-Null

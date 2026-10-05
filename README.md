@@ -33,6 +33,7 @@ A green-on-black hacker theme for **Windows Terminal + PowerShell**, with a Kali
 | **Claude Code status line** | Bar at the bottom of Claude Code: context used, 5-hour and weekly limits with reset times, session cost |
 | **Green syntax colors** | Commands, parameters, strings etc. colored as you type |
 | **VS Code / Cursor terminal** | A green **Hacker Terminal** tab in the editor's built-in terminal: same colors, font, block cursor, prompt and AI usage |
+| **Open in Terminal** | Right-click a folder, a folder's empty space or a drive in File Explorer to open Windows Terminal there |
 
 ## Requirements
 
@@ -69,6 +70,7 @@ git clone https://github.com/Ralph313-creator/hacker-terminal-setup $HOME\hacker
 - Copies the prompt to `~\.config\oh-my-posh\`, the usage reader to `~\.config\ai-usage\`, the wallpaper to `~\.config\terminal\`
 - Replaces your PowerShell profile (Windows PowerShell, and PowerShell 7 if installed)
 - **Adds** the Hacker scheme to Windows Terminal and makes it the default; your existing profiles and schemes stay
+- Adds **Open in Terminal** to the File Explorer right-click menu if it isn't there already (folders, folder background, drives), for your user only. Skip this step with `install.ps1 -SkipContextMenu`
 - Turns on the Claude Code status line in `~\.claude\settings.json`; your other Claude Code settings stay
 - **Adds** a **Hacker Terminal** profile (PowerShell) plus the Hacker colors and font to VS Code, VS Code Insiders and Cursor (whichever you have), and makes it the default terminal; your other editor settings stay. This works even if the editor has never been opened, and also applies to editor profiles that have their own settings. If you picked another shell there (Git Bash, Command Prompt), that stays the default. A Windows Terminal (`wt.exe`) profile is removed, since it opens in a separate window instead of inside the editor. Skip this step with `install.ps1 -SkipVSCode`
 
@@ -150,7 +152,8 @@ Edit `~\.claude\statusline.js`:
 2. **PowerShell profile:** restore the newest `Microsoft.PowerShell_profile.ps1.bak-*` in `Documents\WindowsPowerShell\`, or delete the profile.
 3. **Claude Code status line:** remove the `"statusLine"` block from `~\.claude\settings.json`.
 4. **VS Code / Cursor:** remove the `"Hacker Terminal"` profile and the `defaultProfile` line, the `terminal.*` entries from `"workbench.colorCustomizations"`, and the `terminal.integrated.fontFamily`, `fontSize` and `cursorStyle` lines. Or restore the newest `settings.json.bak-*` in `%APPDATA%\Code\User\` (`%APPDATA%\Cursor\User\` for Cursor).
-5. Optionally delete `~\.config\oh-my-posh\hacker.omp.json`, `~\.config\ai-usage\` and `~\.config\terminal\anonymous-code.jpg`.
+5. **Right-click menu:** if the installer added **Open in Terminal**, delete the `OpenHackerTerminal` key under `HKEY_CURRENT_USER\Software\Classes\Directory\shell`, `...\Directory\Background\shell` and `...\Drive\shell` (in `regedit`).
+6. Optionally delete `~\.config\oh-my-posh\hacker.omp.json`, `~\.config\ai-usage\` and `~\.config\terminal\anonymous-code.jpg`.
 
 ## Troubleshooting
 
@@ -163,6 +166,7 @@ Edit `~\.claude\statusline.js`:
 | VS Code opens the terminal in a separate window | Its default terminal is Windows Terminal (`wt.exe`). Re-run the installer, or set `"terminal.integrated.defaultProfile.windows": "Hacker Terminal"` |
 | Installer says `VS Code / Cursor not found` | Install the editor, then run the installer again |
 | Installer says VS Code settings were skipped | The settings file has `/* */` comments or trailing commas the installer can't read safely. Copy the values from `files/vscode-hacker.json` in by hand |
+| **Open in Terminal** shows twice | Windows Terminal's own entry started showing after the installer added one. Remove the extra one (Uninstall, step 5) |
 | Theme only in some tabs | The theme is applied to **Defaults**; a profile with its own color scheme overrides it |
 
 ## Files
