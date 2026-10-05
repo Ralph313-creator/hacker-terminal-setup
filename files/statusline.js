@@ -23,12 +23,13 @@ function saveLimits(rl) {
   } catch {}
 }
 
-const rgb = (r, g, b) => (s) => `\x1b[38;2;${r};${g};${b}m${s}\x1b[0m`;
-const bright = rgb(57, 255, 20);
-const green = rgb(0, 200, 50);
-const dim = rgb(47, 90, 56);
-const warn = rgb(228, 255, 122);
-const hot = rgb(255, 85, 85);
+// The terminal's 16 colors (not fixed RGB), so the status line follows the color theme
+const ansi = (code) => (s) => `\x1b[${code}m${s}\x1b[0m`;
+const bright = ansi(92); // bright green
+const green = ansi(32);
+const dim = ansi(90); // bright black
+const warn = ansi(93); // bright yellow
+const hot = ansi(91); // bright red
 const sep = dim(' │ ');
 
 function level(pct) {

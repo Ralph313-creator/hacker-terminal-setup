@@ -1,10 +1,12 @@
 # Hacker terminal setup: Windows Terminal theme + Kali-style oh-my-posh prompt + Anonymous wallpaper
 # + Claude Code usage status line + AI usage segment in the prompt (Claude Code, Codex)
 # + the same colors and font in the VS Code / Cursor integrated terminal.
+# Color themes (files/themes.json): -Theme amber picks one; later, `theme <name>` switches.
 # Safe to re-run. Backs up anything it overwrites (*.bak-<timestamp>).
 param(
     [string]$SettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
     [string]$ClaudeDir = (Join-Path $HOME '.claude'),
+    [string]$Theme,
     [switch]$SkipApps,
     [switch]$SkipProfile,
     [switch]$SkipVSCode,
@@ -14,6 +16,10 @@ $ErrorActionPreference = 'Stop'
 $files = Join-Path $PSScriptRoot 'files'
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+
+$themes = Get-Content (Join-Path $files 'themes.json') -Raw | ConvertFrom-Json
+$themeNames = @($themes.PSObject.Properties | ForEach-Object Name)
+if ($Theme -and $themeNames -notcontains $Theme) { throw "Unknown theme '$Theme'. Themes: $($themeNames -join ', ')" }
 
 function Step($msg) { Write-Host "[+] $msg" -ForegroundColor Green }
 function Warn($msg) { Write-Host "[!] $msg" -ForegroundColor Yellow }
@@ -127,6 +133,10 @@ else {
 }
 Step "Wallpaper -> $wall"
 
+# Color theme switcher (`theme` command in the profile) and the themes it offers
+Copy-Item (Join-Path $files 'theme.ps1'), (Join-Path $files 'themes.json') $wallDir -Force
+Step "Theme switcher -> $wallDir\theme.ps1"
+
 # --- 3. PowerShell profile (Windows PowerShell 5.1, and PowerShell 7 if present) ---
 if (-not $SkipProfile) {
     $docs = [Environment]::GetFolderPath('MyDocuments')
@@ -154,8 +164,12 @@ if (Test-Path $SettingsPath) {
 }
 
 foreach ($p in $frag.globals.PSObject.Properties) { SetProp $s $p.Name $p.Value }
-SetProp $s 'schemes' (@($s.schemes | Where-Object { $_ -and $_.name -ne 'Hacker' }) + $frag.scheme)
-SetProp $s 'themes' (@($s.themes | Where-Object { $_ -and $_.name -ne 'Hacker' }) + $frag.theme)
+# Color schemes are added by theme.ps1 at the end. Re-running keeps the theme already picked
+if (-not $Theme) {
+    $Theme = 'matrix'
+    $current = if ($s.profiles -and $s.profiles.defaults) { $s.profiles.defaults.colorScheme }
+    foreach ($n in $themeNames) { if ($themes.$n.scheme.name -eq $current) { $Theme = $n } }
+}
 
 if (-not $s.profiles) { SetProp $s 'profiles' ([pscustomobject]@{}) }
 elseif ($s.profiles -is [array]) { SetProp $s 'profiles' ([pscustomobject]@{ list = $s.profiles }) }
@@ -242,10 +256,8 @@ if (-not $SkipVSCode) {
         New-Item -ItemType Directory -Force (Split-Path $vsSettings) | Out-Null
         Backup $vsSettings
 
+        # Terminal colors are set by theme.ps1 at the end
         foreach ($p in $vs.settings.PSObject.Properties) { SetProp $v $p.Name $p.Value }
-        $colorsKey = 'workbench.colorCustomizations'
-        if (-not $v.$colorsKey) { SetProp $v $colorsKey ([pscustomobject]@{}) }
-        foreach ($p in $vs.colors.PSObject.Properties) { SetProp $v.$colorsKey $p.Name $p.Value }
 
         $profilesKey = 'terminal.integrated.profiles.windows'
         $defaultKey = 'terminal.integrated.defaultProfile.windows'
@@ -309,6 +321,10 @@ if (-not $SkipVSCode) {
     if (-not $found) { Step 'VS Code / Cursor not found; skipped. Re-run the installer after installing one.' }
 }
 
+# --- 7. Color theme: schemes into Windows Terminal, colors into the editors' Hacker Terminal ---
+& (Join-Path $wallDir 'theme.ps1') -Name $Theme -SettingsPath $SettingsPath -SkipEditors:$SkipVSCode
+
 Write-Host ''
 Write-Host 'Done. Open a new Windows Terminal window to see the hacker theme.' -ForegroundColor Green
 Write-Host 'In VS Code, close any open terminals and press Ctrl+` for a themed one.' -ForegroundColor Green
+Write-Host "Theme: $Theme. Type 'theme' in a new terminal to see the others." -ForegroundColor Green

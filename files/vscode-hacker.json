@@ -13,28 +13,5 @@
         "terminal.integrated.fontFamily": "JetBrainsMono NF",
         "terminal.integrated.fontSize": 14,
         "terminal.integrated.cursorStyle": "block"
-    },
-    "colors":
-    {
-        "terminal.background": "#000000",
-        "terminal.foreground": "#00FF41",
-        "terminalCursor.foreground": "#39FF14",
-        "terminal.selectionBackground": "#0F4D1E",
-        "terminal.ansiBlack": "#0A140C",
-        "terminal.ansiRed": "#E0393E",
-        "terminal.ansiGreen": "#00C832",
-        "terminal.ansiYellow": "#C6E000",
-        "terminal.ansiBlue": "#2E8B57",
-        "terminal.ansiMagenta": "#7BC96F",
-        "terminal.ansiCyan": "#00D97E",
-        "terminal.ansiWhite": "#A8F0B4",
-        "terminal.ansiBrightBlack": "#2F5A38",
-        "terminal.ansiBrightRed": "#FF5555",
-        "terminal.ansiBrightGreen": "#39FF14",
-        "terminal.ansiBrightYellow": "#E4FF7A",
-        "terminal.ansiBrightBlue": "#5CDB95",
-        "terminal.ansiBrightMagenta": "#B6FF9E",
-        "terminal.ansiBrightCyan": "#9DFFB0",
-        "terminal.ansiBrightWhite": "#E6FFE9"
     }
 }

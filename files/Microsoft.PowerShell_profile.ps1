@@ -23,18 +23,26 @@ if ($env:WT_SESSION) {
         }
     }
 
+    # The terminal's 16 colors (not fixed RGB), so typing colors follow the color theme
     $e = [char]27
     Set-PSReadLineOption -Colors @{
-        Command   = "$e[38;2;57;255;20m"
-        Parameter = "$e[38;2;0;200;50m"
-        String    = "$e[38;2;228;255;122m"
-        Variable  = "$e[38;2;157;255;176m"
-        Number    = "$e[38;2;198;224;0m"
-        Operator  = "$e[38;2;92;219;149m"
-        Keyword   = "$e[38;2;0;217;126m"
-        Type      = "$e[38;2;168;240;180m"
-        Member    = "$e[38;2;157;255;176m"
-        Comment   = "$e[38;2;47;90;56m"
-        Error     = "$e[38;2;255;85;85m"
+        Command   = "$e[92m"   # bright green
+        Parameter = "$e[32m"   # green
+        String    = "$e[93m"   # bright yellow
+        Variable  = "$e[96m"   # bright cyan
+        Number    = "$e[33m"   # yellow
+        Operator  = "$e[94m"   # bright blue
+        Keyword   = "$e[36m"   # cyan
+        Type      = "$e[37m"   # white
+        Member    = "$e[96m"   # bright cyan
+        Comment   = "$e[90m"   # bright black
+        Error     = "$e[91m"   # bright red
     }
+}
+
+# Color themes: `theme` lists them, `theme amber` switches (Windows Terminal and VS Code / Cursor)
+function theme([string]$Name) { & "$HOME\.config\terminal\theme.ps1" $Name }
+Register-ArgumentCompleter -CommandName theme -ParameterName Name -ScriptBlock {
+    param($command, $parameter, $word)
+    (Get-Content "$HOME\.config\terminal\themes.json" -Raw | ConvertFrom-Json).PSObject.Properties.Name | Where-Object { $_ -like "$word*" }
 }

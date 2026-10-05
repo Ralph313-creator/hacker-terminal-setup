@@ -11,25 +11,25 @@
         {
           "type": "text",
           "style": "plain",
-          "foreground": "#00C832",
+          "foreground": "green",
           "template": "┌──("
         },
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#39FF14",
-          "template": "{{ .UserName }}<#00C832>㉿</>{{ .HostName }}"
+          "foreground": "lightGreen",
+          "template": "{{ .UserName }}<green>㉿</>{{ .HostName }}"
         },
         {
           "type": "text",
           "style": "plain",
-          "foreground": "#00C832",
+          "foreground": "green",
           "template": ")-["
         },
         {
           "type": "path",
           "style": "plain",
-          "foreground": "#E6FFE9",
+          "foreground": "lightWhite",
           "options": {
             "style": "full",
             "home_icon": "~"
@@ -39,16 +39,16 @@
         {
           "type": "text",
           "style": "plain",
-          "foreground": "#00C832",
+          "foreground": "green",
           "template": "]"
         },
         {
           "type": "git",
           "style": "plain",
-          "foreground": "#00C832",
+          "foreground": "green",
           "foreground_templates": [
-            "{{ if or (.Working.Changed) (.Staging.Changed) }}#E4FF7A{{ end }}",
-            "{{ if or (gt .Ahead 0) (gt .Behind 0) }}#9DFFB0{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}lightYellow{{ end }}",
+            "{{ if or (gt .Ahead 0) (gt .Behind 0) }}lightCyan{{ end }}"
           ],
           "options": {
             "branch_icon": " ",
@@ -65,17 +65,17 @@
         {
           "type": "text",
           "style": "plain",
-          "foreground": "#00C832",
+          "foreground": "green",
           "foreground_templates": [
-            "{{ if eq .Env.AI_USAGE_LEVEL \"hot\" }}#FF5555{{ end }}",
-            "{{ if eq .Env.AI_USAGE_LEVEL \"warn\" }}#E4FF7A{{ end }}"
+            "{{ if eq .Env.AI_USAGE_LEVEL \"hot\" }}lightRed{{ end }}",
+            "{{ if eq .Env.AI_USAGE_LEVEL \"warn\" }}lightYellow{{ end }}"
           ],
-          "template": "{{ if .Env.AI_USAGE }}<#2F5A38>[</>{{ .Env.AI_USAGE }}<#2F5A38>]</> {{ end }}"
+          "template": "{{ if .Env.AI_USAGE }}<darkGray>[</>{{ .Env.AI_USAGE }}<darkGray>]</> {{ end }}"
         },
         {
           "type": "executiontime",
           "style": "plain",
-          "foreground": "#2F5A38",
+          "foreground": "darkGray",
           "options": {
             "threshold": 500,
             "style": "austin"
@@ -85,7 +85,7 @@
         {
           "type": "time",
           "style": "plain",
-          "foreground": "#2F5A38",
+          "foreground": "darkGray",
           "options": {
             "time_format": "15:04:05"
           },
@@ -101,15 +101,15 @@
         {
           "type": "text",
           "style": "plain",
-          "foreground": "#00C832",
+          "foreground": "green",
           "template": "└─"
         },
         {
           "type": "status",
           "style": "plain",
-          "foreground": "#39FF14",
+          "foreground": "lightGreen",
           "foreground_templates": [
-            "{{ if gt .Code 0 }}#FF5555{{ end }}"
+            "{{ if gt .Code 0 }}lightRed{{ end }}"
           ],
           "options": {
             "always_enabled": true
@@ -120,11 +120,11 @@
     }
   ],
   "transient_prompt": {
-    "foreground": "#39FF14",
-    "template": "<#00C832>└─</>$ "
+    "foreground": "lightGreen",
+    "template": "<green>└─</>$ "
   },
   "secondary_prompt": {
-    "foreground": "#00C832",
+    "foreground": "green",
     "template": "> "
   }
 }

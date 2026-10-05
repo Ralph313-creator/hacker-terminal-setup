@@ -1,0 +1,152 @@
+{
+    "matrix":
+    {
+        "label": "Matrix green on black (default)",
+        "frame": "#00FF41",
+        "unfocusedFrame": "#0F4D1E",
+        "scheme":
+        {
+            "name": "Hacker",
+            "background": "#000000",
+            "black": "#0A140C",
+            "blue": "#2E8B57",
+            "brightBlack": "#2F5A38",
+            "brightBlue": "#5CDB95",
+            "brightCyan": "#9DFFB0",
+            "brightGreen": "#39FF14",
+            "brightPurple": "#B6FF9E",
+            "brightRed": "#FF5555",
+            "brightWhite": "#E6FFE9",
+            "brightYellow": "#E4FF7A",
+            "cursorColor": "#39FF14",
+            "cyan": "#00D97E",
+            "foreground": "#00FF41",
+            "green": "#00C832",
+            "purple": "#7BC96F",
+            "red": "#E0393E",
+            "selectionBackground": "#0F4D1E",
+            "white": "#A8F0B4",
+            "yellow": "#C6E000"
+        }
+    },
+    "amber":
+    {
+        "label": "Amber CRT, like an old monochrome terminal",
+        "frame": "#FFB000",
+        "unfocusedFrame": "#4D3300",
+        "scheme":
+        {
+            "name": "Hacker Amber",
+            "background": "#050300",
+            "black": "#120C02",
+            "blue": "#A86A00",
+            "brightBlack": "#5C4415",
+            "brightBlue": "#E09A3C",
+            "brightCyan": "#FFCF70",
+            "brightGreen": "#FFC233",
+            "brightPurple": "#FFC98A",
+            "brightRed": "#FF5555",
+            "brightWhite": "#FFF1D6",
+            "brightYellow": "#FFF27A",
+            "cursorColor": "#FFC233",
+            "cyan": "#F0A830",
+            "foreground": "#FFB000",
+            "green": "#D98A00",
+            "purple": "#C9822E",
+            "red": "#E0393E",
+            "selectionBackground": "#4D3300",
+            "white": "#F5D9A8",
+            "yellow": "#E8C547"
+        }
+    },
+    "cyberpunk":
+    {
+        "label": "Neon pink and cyan on deep purple",
+        "frame": "#FF2E97",
+        "unfocusedFrame": "#3A1466",
+        "scheme":
+        {
+            "name": "Hacker Cyberpunk",
+            "background": "#0D0221",
+            "black": "#1A0B36",
+            "blue": "#7B5CFF",
+            "brightBlack": "#5A3E8A",
+            "brightBlue": "#9D8CFF",
+            "brightCyan": "#7DF9FF",
+            "brightGreen": "#00F0FF",
+            "brightPurple": "#FF71CE",
+            "brightRed": "#FF4D4D",
+            "brightWhite": "#F2EEFF",
+            "brightYellow": "#F9F002",
+            "cursorColor": "#FF2E97",
+            "cyan": "#00C8E0",
+            "foreground": "#00E5FF",
+            "green": "#FF2E97",
+            "purple": "#B14AED",
+            "red": "#E8344E",
+            "selectionBackground": "#3A1466",
+            "white": "#C9C3E6",
+            "yellow": "#D6CF00"
+        }
+    },
+    "redteam":
+    {
+        "label": "Blood red on black; errors and full limits glow white-hot",
+        "frame": "#FF2B2B",
+        "unfocusedFrame": "#4D0A0E",
+        "scheme":
+        {
+            "name": "Hacker Red Team",
+            "background": "#080000",
+            "black": "#160404",
+            "blue": "#8C1C24",
+            "brightBlack": "#5E2025",
+            "brightBlue": "#E0454F",
+            "brightCyan": "#FF8A8A",
+            "brightGreen": "#FF3B3B",
+            "brightPurple": "#FF7A85",
+            "brightRed": "#FFFFFF",
+            "brightWhite": "#FFD6D6",
+            "brightYellow": "#FFB347",
+            "cursorColor": "#FF3B3B",
+            "cyan": "#FF5C5C",
+            "foreground": "#FF2B2B",
+            "green": "#D4202A",
+            "purple": "#C2414B",
+            "red": "#FF6B6B",
+            "selectionBackground": "#4D0A0E",
+            "white": "#F0B5B5",
+            "yellow": "#E07A2E"
+        }
+    },
+    "ice":
+    {
+        "label": "Ice blue on black, Tron style",
+        "frame": "#4FD8FF",
+        "unfocusedFrame": "#0E3A5C",
+        "scheme":
+        {
+            "name": "Hacker Ice",
+            "background": "#00060D",
+            "black": "#06121C",
+            "blue": "#1F5FA8",
+            "brightBlack": "#2A4A66",
+            "brightBlue": "#7AB8FF",
+            "brightCyan": "#A0F4FF",
+            "brightGreen": "#5CE1FF",
+            "brightPurple": "#A6B8FF",
+            "brightRed": "#FF5555",
+            "brightWhite": "#E6F7FF",
+            "brightYellow": "#FFE97A",
+            "cursorColor": "#5CE1FF",
+            "cyan": "#00C2E0",
+            "foreground": "#4FD8FF",
+            "green": "#1E9BDB",
+            "purple": "#6C8CFF",
+            "red": "#E0393E",
+            "selectionBackground": "#0E3A5C",
+            "white": "#A8D8F0",
+            "yellow": "#E6D36B"
+        }
+    }
+}
