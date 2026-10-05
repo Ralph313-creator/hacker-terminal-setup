@@ -32,6 +32,7 @@ A green-on-black hacker theme for **Windows Terminal + PowerShell**, with a Kali
 | **AI usage in the prompt** | `[Claude 5h 58% 7d 74% │ GPT 5h 12% 7d 31%]`: last known plan usage of each AI agent you use, shown in every terminal. Green normally, **yellow** at 70%, **red** at 90% |
 | **Claude Code status line** | Bar at the bottom of Claude Code: context used, 5-hour and weekly limits with reset times, session cost |
 | **Green syntax colors** | Commands, parameters, strings etc. colored as you type |
+| **VS Code / Cursor terminal** | A green **Hacker Terminal** tab in the editor's built-in terminal: same colors, font, block cursor, prompt and AI usage |
 
 ## Requirements
 
@@ -69,12 +70,15 @@ git clone https://github.com/Ralph313-creator/hacker-terminal-setup $HOME\hacker
 - Replaces your PowerShell profile (Windows PowerShell, and PowerShell 7 if installed)
 - **Adds** the Hacker scheme to Windows Terminal and makes it the default; your existing profiles and schemes stay
 - Turns on the Claude Code status line in `~\.claude\settings.json`; your other Claude Code settings stay
+- **Adds** a **Hacker Terminal** profile (PowerShell) plus the Hacker colors and font to VS Code, VS Code Insiders and Cursor (whichever you have), and makes it the default terminal; your other editor settings stay. If you picked another shell there (Git Bash, Command Prompt), that stays the default. A Windows Terminal (`wt.exe`) profile is removed, since it opens in a separate window instead of inside the editor. Skip this step with `install.ps1 -SkipVSCode`
 
 Everything it overwrites is backed up next to the original as `*.bak-<timestamp>`. Safe to run again (for example, to update).
 
 ## Using it
 
 **Nothing to do: it's on in every new Windows Terminal tab.**
+
+**In VS Code or Cursor:** close any open terminals (trash can icon), then press **Ctrl + `** to open a **Hacker Terminal** tab. If your default is another shell, pick **Hacker Terminal** from the **⌄** next to **+**. The editor can't embed Windows Terminal itself, so the wallpaper and CRT effect only appear in Windows Terminal; the colors, font, prompt and AI usage are the same.
 
 ### AI usage in the prompt
 
@@ -115,6 +119,17 @@ Press **Ctrl + ,** in Windows Terminal → **Profiles → Defaults → Appearanc
 | Font size | `"font": { "size": 11 }` |
 | Colors | **Settings → Color schemes → Hacker**, or the `"Hacker"` entry under `"schemes"` |
 
+### VS Code / Cursor terminal
+
+Press **Ctrl + Shift + P** → **Preferences: Open User Settings (JSON)**:
+
+| Want | Change |
+|---|---|
+| Font size | `"terminal.integrated.fontSize": 14` |
+| Colors | the `terminal.*` entries in `"workbench.colorCustomizations"` |
+| Tab name | rename the `"Hacker Terminal"` entry under `"terminal.integrated.profiles.windows"`, and `"terminal.integrated.defaultProfile.windows"` to match |
+| Different default shell | `"terminal.integrated.defaultProfile.windows"`: `"Hacker Terminal"`, `"Git Bash"` or `"Command Prompt"` |
+
 ### Prompt
 
 Edit `~\.config\oh-my-posh\hacker.omp.json`: change any `"foreground"` color, or the `"template"` text of a part. Open a new tab to see changes.
@@ -134,7 +149,8 @@ Edit `~\.claude\statusline.js`:
 1. **Windows Terminal:** Settings → Profiles → Defaults → Appearance → pick another color scheme and remove the background image. Or restore the newest `settings.json.bak-*` in `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\`.
 2. **PowerShell profile:** restore the newest `Microsoft.PowerShell_profile.ps1.bak-*` in `Documents\WindowsPowerShell\`, or delete the profile.
 3. **Claude Code status line:** remove the `"statusLine"` block from `~\.claude\settings.json`.
-4. Optionally delete `~\.config\oh-my-posh\hacker.omp.json`, `~\.config\ai-usage\` and `~\.config\terminal\anonymous-code.jpg`.
+4. **VS Code / Cursor:** remove the `"Hacker Terminal"` profile and the `defaultProfile` line, the `terminal.*` entries from `"workbench.colorCustomizations"`, and the `terminal.integrated.fontFamily`, `fontSize` and `cursorStyle` lines. Or restore the newest `settings.json.bak-*` in `%APPDATA%\Code\User\` (`%APPDATA%\Cursor\User\` for Cursor).
+5. Optionally delete `~\.config\oh-my-posh\hacker.omp.json`, `~\.config\ai-usage\` and `~\.config\terminal\anonymous-code.jpg`.
 
 ## Troubleshooting
 
@@ -144,6 +160,8 @@ Edit `~\.claude\statusline.js`:
 | `irm ... \| iex` is blocked | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, then try again |
 | No AI usage in the prompt | Use Claude Code or Codex once; also check `node --version` works |
 | Usage numbers look old | They're the last known values; open the agent to refresh them |
+| VS Code opens the terminal in a separate window | Its default terminal is Windows Terminal (`wt.exe`). Re-run the installer, or set `"terminal.integrated.defaultProfile.windows": "Hacker Terminal"` |
+| Installer says VS Code settings were skipped | The settings file has `/* */` comments or trailing commas the installer can't read safely. Copy the values from `files/vscode-hacker.json` in by hand |
 | Theme only in some tabs | The theme is applied to **Defaults**; a profile with its own color scheme overrides it |
 
 ## Files
@@ -153,6 +171,7 @@ Edit `~\.claude\statusline.js`:
 | `bootstrap.ps1` | One-line installer: downloads this repo and runs `install.ps1` |
 | `install.ps1` / `install.cmd` | Installer (double-click `install.cmd`) |
 | `files/wt-hacker.json` | Color scheme, window theme and defaults merged into Windows Terminal |
+| `files/vscode-hacker.json` | Hacker Terminal profile, colors and font merged into VS Code / Cursor settings |
 | `files/hacker.omp.json` | oh-my-posh prompt |
 | `files/Microsoft.PowerShell_profile.ps1` | PowerShell profile (prompt, AI usage refresh, typing colors) |
 | `files/ai-usage.js` | Reads Claude Code and Codex usage for the prompt |

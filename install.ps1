@@ -1,11 +1,13 @@
 # Hacker terminal setup: Windows Terminal theme + Kali-style oh-my-posh prompt + Anonymous wallpaper
-# + Claude Code usage status line + AI usage segment in the prompt (Claude Code, Codex).
+# + Claude Code usage status line + AI usage segment in the prompt (Claude Code, Codex)
+# + the same colors and font in the VS Code / Cursor integrated terminal.
 # Safe to re-run. Backs up anything it overwrites (*.bak-<timestamp>).
 param(
     [string]$SettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
     [string]$ClaudeDir = (Join-Path $HOME '.claude'),
     [switch]$SkipApps,
-    [switch]$SkipProfile
+    [switch]$SkipProfile,
+    [switch]$SkipVSCode
 )
 $ErrorActionPreference = 'Stop'
 $files = Join-Path $PSScriptRoot 'files'
@@ -134,5 +136,56 @@ SetProp $c 'statusLine' ([pscustomobject]@{
 [IO.File]::WriteAllText($claudeSettings, ($c | ConvertTo-Json -Depth 32), $utf8NoBom)
 Step "Claude Code status line enabled in $claudeSettings"
 
+# --- 6. VS Code / Cursor integrated terminal (merged, not replaced) ---
+if (-not $SkipVSCode) {
+    $vs = Get-Content (Join-Path $files 'vscode-hacker.json') -Raw | ConvertFrom-Json
+    $editors = [ordered]@{
+        'VS Code'          = "$env:APPDATA\Code\User"
+        'VS Code Insiders' = "$env:APPDATA\Code - Insiders\User"
+        'Cursor'           = "$env:APPDATA\Cursor\User"
+    }
+    foreach ($name in $editors.Keys) {
+        $dir = $editors[$name]
+        if (-not (Test-Path $dir)) { continue }
+        $vsSettings = Join-Path $dir 'settings.json'
+        $raw = if (Test-Path $vsSettings) { (Get-Content $vsSettings) | Where-Object { $_ -notmatch '^\s*//' } } else { $null }
+        try {
+            $v = if ("$raw".Trim()) { ($raw -join "`n") | ConvertFrom-Json } else { [pscustomobject]@{} }
+        } catch {
+            # VS Code allows comments and trailing commas that Windows PowerShell can't parse; don't risk breaking the file
+            Warn "$name settings could not be read (comments or trailing commas?). Skipped; copy files\vscode-hacker.json in by hand."
+            continue
+        }
+        Backup $vsSettings
+
+        foreach ($p in $vs.settings.PSObject.Properties) { SetProp $v $p.Name $p.Value }
+        $colorsKey = 'workbench.colorCustomizations'
+        if (-not $v.$colorsKey) { SetProp $v $colorsKey ([pscustomobject]@{}) }
+        foreach ($p in $vs.colors.PSObject.Properties) { SetProp $v.$colorsKey $p.Name $p.Value }
+
+        $profilesKey = 'terminal.integrated.profiles.windows'
+        $defaultKey = 'terminal.integrated.defaultProfile.windows'
+        if (-not $v.$profilesKey) { SetProp $v $profilesKey ([pscustomobject]@{}) }
+        # A profile that launches wt.exe opens Windows Terminal in its own window instead of inside the editor
+        $wtProfiles = @($v.$profilesKey.PSObject.Properties | Where-Object { $_.Value -and "$($_.Value.path)" -match 'wt\.exe' } | ForEach-Object Name)
+        foreach ($n in $wtProfiles) { $v.$profilesKey.PSObject.Properties.Remove($n) }
+        if ($wtProfiles -contains $v.$defaultKey) { Step "$name default terminal was Windows Terminal (opens outside the editor); replaced" }
+
+        # "Hacker Terminal" profile: PowerShell with the tab named "Hacker Terminal"
+        SetProp $v.$profilesKey $vs.profileName $vs.profile
+        # Becomes the default unless the user picked another shell (Git Bash, cmd, ...)
+        $current = $v.$defaultKey
+        if (-not $current -or $current -in @('PowerShell', 'Windows PowerShell', $vs.profileName) -or $wtProfiles -contains $current) {
+            SetProp $v $defaultKey $vs.profileName
+        } else {
+            Warn "$name default terminal is '$current'; left as is. Pick '$($vs.profileName)' from the + dropdown to use it."
+        }
+
+        [IO.File]::WriteAllText($vsSettings, ($v | ConvertTo-Json -Depth 32), $utf8NoBom)
+        Step "$name terminal theme -> $vsSettings"
+    }
+}
+
 Write-Host ''
 Write-Host 'Done. Open a new Windows Terminal window to see the hacker theme.' -ForegroundColor Green
+Write-Host 'In VS Code, close any open terminals and press Ctrl+` for a themed one.' -ForegroundColor Green
