@@ -45,7 +45,7 @@ A green-on-black hacker theme for **Windows Terminal + PowerShell**, with a Kali
 - Windows 10 or 11
 - `winget` (built in on Windows 11; on Windows 10 install **App Installer** from the Microsoft Store)
 
-The installer adds everything else: Windows Terminal, oh-my-posh, Node.js and the JetBrainsMono Nerd Font.
+The installer adds everything else: Windows Terminal, oh-my-posh, Node.js, VS Code and the JetBrainsMono Nerd Font.
 
 ## Install
 
@@ -73,13 +73,13 @@ git clone https://github.com/Ralph313-creator/hacker-terminal-setup $HOME\hacker
 
 ### What the installer changes
 
-- Installs Windows Terminal from the Microsoft Store if it isn't there (`winget install --id 9N0DX20HK701 -s msstore`) and replaces a non-Store copy with the Store one, plus oh-my-posh, Node.js and the JetBrainsMono Nerd Font (skips what's already installed)
+- Installs Windows Terminal from the Microsoft Store if it isn't there (`winget install --id 9N0DX20HK701 -s msstore`) and replaces a non-Store copy with the Store one, plus oh-my-posh, Node.js, VS Code and the JetBrainsMono Nerd Font (skips what's already installed; `-SkipVSCode` leaves out VS Code)
 - Copies the prompt to `~\.config\oh-my-posh\`, the usage reader to `~\.config\ai-usage\`, the wallpaper and theme switcher to `~\.config\terminal\`
 - Replaces your PowerShell profile (Windows PowerShell, and PowerShell 7 if installed)
 - **Adds** the five Hacker color schemes to Windows Terminal and makes one the default (Matrix green, or the theme you already picked when you run it again); your existing profiles and schemes stay
 - Adds **Open in Terminal** to the File Explorer right-click menu if it isn't there already (folders, folder background, drives), for your user only. Skip this step with `install.ps1 -SkipContextMenu`
 - Turns on the Claude Code status line in `~\.claude\settings.json`; your other Claude Code settings stay
-- **Adds** a **Hacker Terminal** profile (PowerShell) plus the Hacker colors and font to VS Code, VS Code Insiders and Cursor (whichever you have), and makes it the default terminal; your other editor settings stay. This works even if the editor has never been opened, and also applies to editor profiles that have their own settings. If you picked another shell there (Git Bash, Command Prompt), that stays the default. A Windows Terminal (`wt.exe`) profile is removed, since it opens in a separate window instead of inside the editor. Skip this step with `install.ps1 -SkipVSCode`
+- **Adds** a **Hacker Terminal** profile (PowerShell) plus the Hacker colors and font to VS Code, VS Code Insiders and Cursor (whichever you have), and makes it the default terminal; your other editor settings stay. This works even if the editor has never been opened, and also applies to editor profiles that have their own settings. If you picked another shell there (Git Bash, Command Prompt), that stays the default. A Windows Terminal (`wt.exe`) profile is removed, since it opens in a separate window instead of inside the editor. Skip this step, and the VS Code install, with `install.ps1 -SkipVSCode`
 
 Everything it overwrites is backed up next to the original as `*.bak-<timestamp>`. Safe to run again (for example, to update).
 
@@ -208,7 +208,8 @@ Running the installer again replaces `themes.json`, so keep a copy of your theme
 | No AI usage in the prompt | Use Claude Code or Codex once; also check `node --version` works |
 | Usage numbers look old | They're the last known values; open the agent to refresh them |
 | VS Code opens the terminal in a separate window | Its default terminal is Windows Terminal (`wt.exe`). Re-run the installer, or set `"terminal.integrated.defaultProfile.windows": "Hacker Terminal"` |
-| Installer says `VS Code / Cursor not found` | Install the editor, then run the installer again |
+| Installer says `VS Code / Cursor not found` | You ran it with `-SkipApps`. Install the editor (or run without `-SkipApps`), then run the installer again |
+| Installer says `oh-my-posh didn't install` | Run `winget install --id JanDeDobbeleer.OhMyPosh -e`, then the installer again. Until then the prompt is plain PowerShell |
 | Installer says VS Code settings were skipped | The settings file has `/* */` comments or trailing commas the installer can't read safely. Copy the values from `files/vscode-hacker.json` in by hand, and the colors from your theme in `files/themes.json` (key names are listed in `files/theme.ps1`) |
 | `theme` isn't recognized | Open a new terminal tab so the updated profile loads. Still missing? Run the installer again; `-SkipProfile` leaves out the command |
 | **Open in Terminal** shows twice | Windows Terminal's own entry started showing after the installer added one. Remove the extra one (Uninstall, step 5) |

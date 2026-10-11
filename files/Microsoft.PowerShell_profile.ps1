@@ -1,7 +1,10 @@
 # Hacker prompt + syntax colors - only inside Windows Terminal (legacy console can't render Nerd Font glyphs)
 # Previous Neon setup: Microsoft.PowerShell_profile.ps1.neon-backup
 if ($env:WT_SESSION) {
-    oh-my-posh init powershell --config "$HOME\.config\oh-my-posh\hacker.omp.json" | Invoke-Expression
+    # Without oh-my-posh: plain prompt instead of an error in every new tab
+    if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
+        oh-my-posh init powershell --config "$HOME\.config\oh-my-posh\hacker.omp.json" | Invoke-Expression
+    }
 
     # AI usage segment (Claude Code, Codex): refresh $env:AI_USAGE before oh-my-posh draws each prompt.
     # oh-my-posh reads the last command's success from NVS_ORIGINAL_LASTEXECUTIONSTATUS when set,

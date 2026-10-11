@@ -83,26 +83,42 @@ if (-not $SkipApps) {
         }
         if (-not (Test-WindowsTerminal)) { Warn "Windows Terminal didn't install. Get it from https://apps.microsoft.com/detail/$wtStoreId" }
     }
-    foreach ($id in 'JanDeDobbeleer.OhMyPosh') {
-        winget list --id $id -e --accept-source-agreements *> $null
-        if ($LASTEXITCODE -eq 0) { Step "$id already installed" }
-        else {
-            Step "Installing $id"
-            winget install --id $id -e --silent --accept-package-agreements --accept-source-agreements
-        }
+    # Pick up PATH changes from installs, so this session finds the new commands
+    function Update-Path {
+        $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+    }
+    # Installs $id with winget unless $Test finds the app. Checks the app itself, not winget's list,
+    # which can report an app installed when it isn't (and then winget install skips it too)
+    function Install-App($name, $id, [scriptblock]$Test) {
+        if (& $Test) { Step "$name already installed"; return }
+        Step "Installing $name"
+        $a = @('install', '--id', $id, '-e', '--silent', '--accept-package-agreements', '--accept-source-agreements')
+        winget @a
+        Update-Path
+        if (-not (& $Test)) { winget @a --force; Update-Path }
+        if (-not (& $Test)) { Warn "$name didn't install. Install it by hand: winget install --id $id -e" }
+    }
+    $ompExe = "$env:LOCALAPPDATA\Programs\oh-my-posh\bin\oh-my-posh.exe"
+    Install-App 'oh-my-posh' 'JanDeDobbeleer.OhMyPosh' {
+        if ((-not (Get-Command oh-my-posh -ErrorAction SilentlyContinue)) -and (Test-Path $ompExe)) { $env:Path += ";$(Split-Path $ompExe)" }
+        [bool](Get-Command oh-my-posh -ErrorAction SilentlyContinue)
     }
     # Node.js runs the Claude Code status line
-    if (Get-Command node -ErrorAction SilentlyContinue) { Step 'Node.js already installed' }
-    else {
-        Step 'Installing Node.js LTS'
-        winget install --id OpenJS.NodeJS.LTS -e --silent --accept-package-agreements --accept-source-agreements
+    Install-App 'Node.js' 'OpenJS.NodeJS.LTS' { [bool](Get-Command node -ErrorAction SilentlyContinue) }
+    # VS Code gets the Hacker Terminal in step 6
+    if (-not $SkipVSCode) {
+        Install-App 'VS Code' 'Microsoft.VisualStudioCode' {
+            (Test-Path "$env:LOCALAPPDATA\Programs\Microsoft VS Code\Code.exe") -or (Test-Path "$env:ProgramFiles\Microsoft VS Code\Code.exe") -or
+                [bool](Get-Command code -ErrorAction SilentlyContinue)
+        }
     }
-    # Pick up PATH changes from the installs above
-    $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
 
     Add-Type -AssemblyName System.Drawing
     $families = (New-Object System.Drawing.Text.InstalledFontCollection).Families | ForEach-Object Name
     if ($families -contains 'JetBrainsMono NF') { Step 'JetBrainsMono Nerd Font already installed' }
+    elseif (-not (Get-Command oh-my-posh -ErrorAction SilentlyContinue)) {
+        Warn 'JetBrainsMono Nerd Font not installed (needs oh-my-posh). Install oh-my-posh, then run: oh-my-posh font install JetBrainsMono'
+    }
     else {
         Step 'Installing JetBrainsMono Nerd Font'
         $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
