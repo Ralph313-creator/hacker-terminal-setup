@@ -18,7 +18,10 @@
           "type": "session",
           "style": "plain",
           "foreground": "lightGreen",
-          "template": "{{ .UserName }}<green>㉿</>{{ .HostName }}"
+          "foreground_templates": [
+            "{{ if .Root }}lightRed{{ end }}"
+          ],
+          "template": "{{ .UserName }}{{ if .Root }}💀{{ else }}<green>㉿</>{{ end }}{{ .HostName }}"
         },
         {
           "type": "text",
@@ -31,10 +34,11 @@
           "style": "plain",
           "foreground": "lightWhite",
           "options": {
-            "style": "full",
+            "style": "agnoster_short",
+            "max_depth": 3,
             "home_icon": "~"
           },
-          "template": "{{ .Path }}"
+          "template": "<green>\uf07c</> {{ .Path }}"
         },
         {
           "type": "text",
@@ -51,10 +55,10 @@
             "{{ if or (gt .Ahead 0) (gt .Behind 0) }}lightCyan{{ end }}"
           ],
           "options": {
-            "branch_icon": " ",
+            "branch_icon": "\ue0a0 ",
             "fetch_status": true
           },
-          "template": "-[{{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} *{{ .Working.String }}{{ end }}{{ if .Staging.Changed }} +{{ .Staging.String }}{{ end }}]"
+          "template": "-[{{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}]"
         }
       ]
     },
@@ -80,7 +84,7 @@
             "threshold": 500,
             "style": "austin"
           },
-          "template": "[{{ .FormattedMs }}] "
+          "template": "[\uf252 {{ .FormattedMs }}] "
         },
         {
           "type": "time",
@@ -89,7 +93,7 @@
           "options": {
             "time_format": "15:04:05"
           },
-          "template": "[{{ .CurrentDate | date .Format }}]"
+          "template": "[\uf017 {{ .CurrentDate | date .Format }}]"
         }
       ]
     },
@@ -109,7 +113,8 @@
           "style": "plain",
           "foreground": "lightGreen",
           "foreground_templates": [
-            "{{ if gt .Code 0 }}lightRed{{ end }}"
+            "{{ if gt .Code 0 }}lightRed{{ end }}",
+            "{{ if .Root }}lightRed{{ end }}"
           ],
           "options": {
             "always_enabled": true
@@ -121,7 +126,10 @@
   ],
   "transient_prompt": {
     "foreground": "lightGreen",
-    "template": "<green>└─</>$ "
+    "foreground_templates": [
+      "{{ if .Root }}lightRed{{ end }}"
+    ],
+    "template": "<green>└─</>{{ if .Root }}#{{ else }}${{ end }} "
   },
   "secondary_prompt": {
     "foreground": "green",

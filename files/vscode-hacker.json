@@ -10,7 +10,7 @@
     },
     "settings":
     {
-        "terminal.integrated.fontFamily": "JetBrainsMono NF",
+        "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrainsMono NF', monospace",
         "terminal.integrated.fontSize": 14,
         "terminal.integrated.cursorStyle": "block"
     }

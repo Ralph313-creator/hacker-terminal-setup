@@ -28,7 +28,7 @@
             "experimental.retroTerminalEffect": true,
             "font":
             {
-                "face": "JetBrainsMono NF",
+                "face": "JetBrainsMono Nerd Font",
                 "size": 11
             },
             "padding": "16, 12, 16, 12"

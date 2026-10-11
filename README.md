@@ -33,7 +33,7 @@ A green-on-black hacker theme for **Windows Terminal + PowerShell**, with a Kali
 | **Hacker color scheme** | Matrix green on pure black, block cursor, green window border, CRT scanline effect |
 | **Color themes** | `matrix` (default), `amber`, `cyberpunk`, `redteam`, `ice`. Type `theme amber` to switch Windows Terminal and the VS Code / Cursor terminal together |
 | **Anonymous wallpaper** | Mask made of code, dimmed behind your text |
-| **Kali-style prompt** | `┌──(user㉿host)-[path]-[git branch]` with `$` (or `#` when running as admin), red exit code when a command fails |
+| **Kali-style prompt** | `┌──(user㉿host)-[path]-[git branch]` with `$`, red exit code when a command fails. Icons for the folder, git changes, run time and clock. As admin it turns red with `user💀host` and `#`, like Kali's root prompt |
 | **AI usage in the prompt** | `[Claude 5h 58% 7d 74% │ GPT 5h 12% 7d 31%]`: last known plan usage of each AI agent you use, shown in every terminal. Green normally, **yellow** at 70%, **red** at 90% |
 | **Claude Code status line** | Bar at the bottom of Claude Code: context used, 5-hour and weekly limits with reset times, session cost |
 | **Green syntax colors** | Commands, parameters, strings etc. colored as you type |
@@ -204,6 +204,7 @@ Running the installer again replaces `themes.json`, so keep a copy of your theme
 | Problem | Fix |
 |---|---|
 | Boxes or `?` instead of icons | The font didn't install. Run `oh-my-posh font install JetBrainsMono`, then restart Windows Terminal |
+| Terminal says `Unable to find the selected font "JetBrainsMono NF"` | Settings from an older version of this installer. Run the installer again; it now uses the name `JetBrainsMono Nerd Font`, which every Terminal version finds |
 | `irm ... \| iex` is blocked | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, then try again |
 | No AI usage in the prompt | Use Claude Code or Codex once; also check `node --version` works |
 | Usage numbers look old | They're the last known values; open the agent to refresh them |
